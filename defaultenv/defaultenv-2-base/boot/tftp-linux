@@ -1,0 +1,26 @@
+#!/bin/sh
+
+imgdir=/mnt/tftp
+#global.bootm.image=/mnt/mmc1/zImage
+#global.bootm.oftree=/env/oftree
+#global.bootm.oftree=/mnt/sd.1/extlinux/dtb_5.16
+#global.bootm.image=/mnt/sd.1/extlinux/Image_5.16.gz
+#global.bootm.initrd=/mnt/sd.1/rootfs.cpio.lz4
+
+cat $imgdir/${global.hostname}.lst
+
+global.bootm.oftree=$imgdir/${global.user}-oftree-${global.hostname}
+global.bootm.image=$imgdir/${global.user}-linux-${global.hostname}
+global.bootm.initrd=$imgdir/${global.user}-initramfs-${global.hostname}
+
+ls $imgdir
+readline "which kernel? " imagefile
+readline "which dtb? " dtbfile
+
+if [ -n "$imagefile" ]; then
+	global.bootm.image=$imgdir/$imagefile
+fi
+if [ -n "$dtbfile" ]; then
+	global.bootm.oftree=$imgdir/$dtbfile
+fi
+#bootm
