@@ -5,7 +5,10 @@ export CROSS_COMPILE=aarch64-linux-gnu-
 
 case $1 in
 "importconfig")
-	make rockchip_v8_defconfig
+	make rk3568_defconfig
+	;;
+"defconfig")
+	nano arch/arm/configs/rk3568_defconfig
 	;;
 "config")
 	make menuconfig
