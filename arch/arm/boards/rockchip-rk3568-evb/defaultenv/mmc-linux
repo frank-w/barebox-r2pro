@@ -1,7 +1,0 @@
-#!/bin/sh
-
-#global.bootm.image=/mnt/mmc1/zImage
-#global.bootm.oftree=/env/oftree
-global.bootm.oftree=/mnt/sd.1/extlinux/dtb_5.16
-global.bootm.image=/mnt/sd.1/extlinux/Image_5.16.gz
-global.bootm.initrd=/mnt/sd.1/rootfs.cpio.lz4
