@@ -1,0 +1,2 @@
+#!/bin/sh
+i=0;for f in /mnt/sd.1/extlinux/Image*; do basename $f b; echo "$i:$b";let i++; done
