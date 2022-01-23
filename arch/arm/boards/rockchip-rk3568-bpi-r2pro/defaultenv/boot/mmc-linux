@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ "$bootsource" = mmc -a "$bootsource_instance" = 1 ];
+then
+	echo "booted from SD";
+	dev="sd";
+else
+	echo "booted from EMMC";
+	dev="emmc";
+fi
+
+
+imgdir=/mnt/${dev}.1/extlinux
+
+echo "DEV: $dev imgdir: $imgdir"
+
+global.bootm.oftree=$imgdir/dtb_5.16
+global.bootm.image=$imgdir/Image_5.16.gz
+global.bootm.initrd=/mnt/sd.1/rootfs.cpio.lz4
+
+cd $imgdir
+ls Image*
+readline "which kernel? " imagefile
+ls *dtb*
+readline "which dtb? " dtbfile
+
+if [ -n "$imagefile" ]; then
+	global.bootm.image=$imgdir/$imagefile
+fi
+if [ -n "$dtbfile" ]; then
+	global.bootm.oftree=$imgdir/$dtbfile
+fi
+#bootm

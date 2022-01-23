@@ -8,6 +8,7 @@
 #include <aiodev.h>
 #include <bootsource.h>
 #include <environment.h>
+#include <envfs.h>
 #include <globalvar.h>
 #include <magicvar.h>
 #include <deep-probe.h>
@@ -32,6 +33,8 @@ static int rk3568_bpi_r2pro_probe(struct device_d *dev)
 		of_device_enable_path("/chosen/environment-sd");
 	else
 		of_device_enable_path("/chosen/environment-emmc");
+
+	defaultenv_append_directory(defaultenv);
 
 	rk3568_bbu_mmc_register("emmc", BBU_HANDLER_FLAG_DEFAULT, "/dev/emmc");
 	rk3568_bbu_mmc_register("sd", 0, "/dev/sd");
