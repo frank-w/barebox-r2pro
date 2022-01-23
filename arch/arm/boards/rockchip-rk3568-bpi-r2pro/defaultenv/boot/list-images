@@ -1,0 +1,21 @@
+#!/bin/sh
+imgdir=/mnt/sd.1/extlinux
+i=0;for f in $imgdir/Image*; do basename $f b; echo "$i:$b"; img_$i=$b; let i++; done
+readline "which kernel? " imgno
+
+echo ${imgno}
+echo ${img_${imgno}}
+
+#global.bootm.oftree=$imgdir/dtb_5.16
+#global.bootm.image=$imgdir/${img_${imgno}}
+#global.bootm.initrd=/mnt/sd.1/rootfs.cpio.lz4
+
+#ls *dtb*
+#readline "which dtb? " dtbfile
+
+#if [ -n "$imagefile" ]; then
+#    global.bootm.image=$imgdir/$imagefile
+#fi
+#if [ -n "$dtbfile" ]; then
+#    global.bootm.oftree=$imgdir/$dtbfile
+#fi
