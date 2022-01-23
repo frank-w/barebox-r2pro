@@ -82,6 +82,12 @@ static int rk3568_bpi_r2pro_detect_hwid(void)
 
 	globalvar_add_simple("board.hwid", hwid);
 
+
+	hwid_chan = aiochannel_by_name("aiodev0.in_value5_mV");//temp sensor
+	ret = aiochannel_get_value(hwid_chan, &hwid_voltage);
+	pr_info("temp_voltage: %d\n", hwid_voltage);
+
+
 	return 0;
 
 err_hwid:
