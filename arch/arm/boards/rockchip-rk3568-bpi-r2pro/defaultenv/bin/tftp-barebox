@@ -1,0 +1,3 @@
+#!/bin/sh
+filename=/mnt/tftp/barebox-rk3568-bpi-r2pro.img
+bootm ${filename}
