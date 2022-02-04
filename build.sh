@@ -30,6 +30,9 @@ case $1 in
 		sudo dd if=images/barebox-rk3568-r2pro.img of=$dev bs=1024 seek=32
 	fi
 	;;
+"upload")
+	scp images/barebox-rk3568-bpi-r2pro.img 192.168.0.10:/var/lib/tftp/
+	;;
 *)
 	echo "unknown command $1"
 	;;
