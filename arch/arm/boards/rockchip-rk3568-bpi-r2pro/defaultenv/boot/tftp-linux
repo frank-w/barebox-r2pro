@@ -5,13 +5,13 @@ imgdir=/mnt/tftp
 #global.bootm.image=/mnt/sd.1/extlinux/Image_5.16.gz
 #global.bootm.initrd=/mnt/sd.1/rootfs.cpio.lz4
 
-cat $imgdir/${global.hostname}.lst
-
 global.bootm.oftree=$imgdir/${global.user}-oftree-${global.hostname}
 global.bootm.image=$imgdir/${global.user}-linux-${global.hostname}
 global.bootm.initrd=$imgdir/${global.user}-initramfs-${global.hostname}
 
-ls $imgdir
+echo "reading $imgdir/${global.hostname}.lst"
+cat $imgdir/${global.hostname}.lst
+
 readline "which kernel? " imagefile
 readline "which dtb? " dtbfile
 
