@@ -1,1 +1,1 @@
-net list-images mmc-linux tftp-linux
+net mmc-linux tftp-linux
