@@ -1,0 +1,68 @@
+name: CI-build
+
+# Controls when the action will run. 
+on:
+  push:
+    branches:
+    - r2pro
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 10
+
+      - name: Install depencies
+        run: |
+          sudo apt update
+          #sudo apt install ccache libssl-dev u-boot-tools python-mako debhelper fakeroot gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu make device-tree-compiler libncurses5-dev
+          sudo apt install gcc-aarch64-linux-gnu make device-tree-compiler lzop
+
+      - name: Setup env
+        run: |
+          echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
+          echo "VER=$(make bareboxversion)" >> $GITHUB_ENV
+          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Print env
+        run: |
+          echo $BRANCH $VER $DT
+
+#      - name: download binary files
+#        run: |
+#          #cp rk3568_bl31_v1.24.elf firmware/rk3568-bl31.bin
+#          wget https://github.com/JeffyCN/rockchip_mirrors/raw/rkbin/bin/rk35/rk3568_bl31_v1.32.elf -O firmware/rk3568-bl31.bin
+#          #cp rk3568_ddr_1560MHz_v1.11.bin cp rk3568_ddr_1560MHz_v1.11.bin arch/arm/boards/rockchip-rk3568-evb/sdram-init.bin
+#          wget https://github.com/JeffyCN/rockchip_mirrors/raw/rkbin/bin/rk35/rk3568_ddr_1560MHz_v1.12.bin -O arch/arm/boards/rockchip-rk3568-bpi-r2pro/sdram-init.bin
+
+      - name: Build for bananapi-r2pro
+        run: | 
+          bash build.sh importconfig
+          bash build.sh build
+
+      - name: Upload binaries to release
+        #if: endsWith(github.ref,'-main') 
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          #draft: true
+          #prerelease: true
+          body: "${{ github.sha }} - Branch: ${{ env.BRANCH }} Version: ${{ env.VER }}"
+          tag_name: "CI-BUILD-${{ env.BRANCH }}-${{ env.VER }}-${{ env.DT }}"
+          target_commitish: ${{ github.sha }}
+          files: |
+            images/barebox-rk3568-bpi-r2pro.img
+            images/barebox-dt-2nd.img
+            arch/arm/dts/rk3568-bpi-r2-pro.dtb
