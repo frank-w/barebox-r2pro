@@ -33,20 +33,27 @@ jobs:
       - name: Setup env
         run: |
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
-          echo "VER=$(make version)" >> $GITHUB_ENV
+          echo "VER=$(make bareboxversion)" >> $GITHUB_ENV
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Print env
         run: |
           echo $BRANCH $VER $DT
-          
+
+      - name: download binary files
+        run: |
+          #cp rk3568_bl31_v1.24.elf firmware/rk3568-bl31.bin
+          wget https://github.com/JeffyCN/rockchip_mirrors/raw/rkbin/bin/rk35/rk3568_bl31_v1.32.elf -O firmware/rk3568-bl31.bin
+          #cp rk3568_ddr_1560MHz_v1.11.bin cp rk3568_ddr_1560MHz_v1.11.bin arch/arm/boards/rockchip-rk3568-evb/sdram-init.bin
+          wget https://github.com/JeffyCN/rockchip_mirrors/raw/rkbin/bin/rk35/rk3568_ddr_1560MHz_v1.12.bin -O arch/arm/boards/rockchip-rk3568-bpi-r2pro/sdram-init.bin
+
       - name: Build for bananapi-r2pro
         run: | 
           bash build.sh importconfig
           bash build.sh build
 
       - name: Upload binaries to release
-        if: endsWith(github.ref,'-main') 
+        #if: endsWith(github.ref,'-main') 
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
