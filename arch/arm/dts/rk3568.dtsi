@@ -772,6 +772,21 @@
 		clock-names = "tclk", "pclk";
 	};
 
+	spi3: spi@fe640000 {
+		compatible = "rockchip,rk3568-spi", "rockchip,rk3066-spi";
+		reg = <0x0 0xfe640000 0x0 0x1000>;
+		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&cru CLK_SPI3>, <&cru PCLK_SPI3>;
+		clock-names = "spiclk", "apb_pclk";
+		dmas = <&dmac0 26>, <&dmac0 27>;
+		dma-names = "tx", "rx";
+		pinctrl-names = "default";
+		pinctrl-0 = <&spi3m0_cs0 &spi3m0_cs1 &spi3m0_pins>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "disabled";
+	};
+
 	uart1: serial@fe650000 {
 		compatible = "rockchip,rk3568-uart", "snps,dw-apb-uart";
 		reg = <0x0 0xfe650000 0x0 0x100>;
@@ -1027,6 +1042,26 @@
 		pinctrl-0 = <&pwm15m0_pins>;
 		pinctrl-names = "active";
 		#pwm-cells = <3>;
+		status = "disabled";
+	};
+
+	tsadc: tsadc@fe710000 {
+		compatible = "rockchip,rk3568-tsadc";
+		reg = <0x0 0xfe710000 0x0 0x100>;
+		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+		assigned-clocks = <&cru CLK_TSADC_TSEN>, <&cru CLK_TSADC>;
+		assigned-clock-rates = <17000000>, <700000>;
+		clocks = <&cru CLK_TSADC>, <&cru PCLK_TSADC>;
+		clock-names = "tsadc", "apb_pclk";
+		resets = <&cru SRST_P_TSADC>, <&cru SRST_TSADC>,
+			 <&cru SRST_TSADCPHY>;
+		rockchip,grf = <&grf>;
+		rockchip,hw-tshut-temp = <95000>;
+		pinctrl-names = "init", "default", "sleep";
+		pinctrl-0 = <&tsadc_pin>;
+		pinctrl-1 = <&tsadc_shutorg>;
+		pinctrl-2 = <&tsadc_pin>;
+		#thermal-sensor-cells = <1>;
 		status = "disabled";
 	};
 
