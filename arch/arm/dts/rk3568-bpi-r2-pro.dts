@@ -507,6 +507,17 @@
 	};
 };
 
+&spi3 {
+	/* pin 19 (MO) + 21 (MI) + 23 (CK) of header con2 */
+	/* shared with pwm12/14/15 and uart9 */
+	pinctrl-0 = <&spi3m1_pins>;
+	status = "disabled";
+};
+
+&tsadc {
+	status = "okay";
+};
+
 &uart0 {
 	/* pin 8 (TX) + 10 (RX) (RTS:16, CTS:18) of header con2 */
 	status = "disabled";
