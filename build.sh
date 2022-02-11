@@ -27,7 +27,7 @@ case $1 in
 	choice=y
 	read -e -i "$dev" -p "Please enter target device: " dev
 	if [[ $? -eq 0 ]];then
-		sudo dd if=images/barebox-rk3568-r2pro.img of=$dev bs=1024 seek=32
+		sudo dd if=images/barebox-rk3568-bpi-r2pro.img of=$dev bs=1024 seek=32
 	fi
 	;;
 "upload")
