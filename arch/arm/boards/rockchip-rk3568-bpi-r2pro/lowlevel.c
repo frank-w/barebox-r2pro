@@ -10,8 +10,9 @@
 #include <mach/rockchip.h>
 
 extern char __dtb_rk3568_bpi_r2_pro_start[];
+extern char __dtb_rk3568_bpi_r2_pro_v00_start[];
 
-static noinline void rk3568_start(void)
+static noinline void rk3568_start(void *fdt_blob_fixed_offset)
 {
 	void *fdt;
 
@@ -24,7 +25,7 @@ static noinline void rk3568_start(void)
 	//clear bit 6 for 3v3 as it was set to 1v8
 	writel(RK_CLRBITS(BIT(6)), PMU_GRF_IO_VSEL1);
 
-	fdt = __dtb_rk3568_bpi_r2_pro_start;
+	fdt = fdt_blob_fixed_offset;
 
 	if (current_el() == 3) {
 		rk3568_lowlevel_init();
@@ -35,7 +36,7 @@ static noinline void rk3568_start(void)
 	barebox_arm_entry(RK3568_DRAM_BOTTOM, 0x80000000 - RK3568_DRAM_BOTTOM, fdt);
 }
 
-ENTRY_FUNCTION(start_rk3568_bpi_r2pro, r0, r1, r2)
+static void start_rk3568_bpi_r2pro_common(void *fdt_blob_fixed_offset)
 {
 	/*
 	 * Image execution starts at 0x0, but this is used for ATF and
@@ -48,5 +49,15 @@ ENTRY_FUNCTION(start_rk3568_bpi_r2pro, r0, r1, r2)
 
 	setup_c();
 
-	rk3568_start();
+	rk3568_start(fdt_blob_fixed_offset);
+}
+
+ENTRY_FUNCTION(start_rk3568_bpi_r2pro, r0, r1, r2)
+{
+	start_rk3568_bpi_r2pro_common(__dtb_rk3568_bpi_r2_pro_start);
+}
+
+ENTRY_FUNCTION(start_rk3568_bpi_r2pro_v00, r0, r1, r2)
+{
+	start_rk3568_bpi_r2pro_common(__dtb_rk3568_bpi_r2_pro_v00_start);
 }

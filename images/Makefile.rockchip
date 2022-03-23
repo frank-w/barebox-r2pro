@@ -17,6 +17,9 @@ image-$(CONFIG_MACH_RK3568_EVB) += barebox-rk3568-evb.img
 pblb-$(CONFIG_MACH_RK3568_BPI_R2PRO) += start_rk3568_bpi_r2pro
 image-$(CONFIG_MACH_RK3568_BPI_R2PRO) += barebox-rk3568-bpi-r2pro.img
 
+pblb-$(CONFIG_MACH_RK3568_BPI_R2PRO) += start_rk3568_bpi_r2pro_v00
+image-$(CONFIG_MACH_RK3568_BPI_R2PRO) += barebox-rk3568-bpi-r2pro-v00.img
+
 pblb-$(CONFIG_MACH_PINE64_QUARTZ64) += start_quartz64a
 image-$(CONFIG_MACH_PINE64_QUARTZ64) += barebox-quartz64a.img
 
@@ -31,6 +34,9 @@ $(obj)/barebox-rk3568-evb.img: $(obj)/start_rk3568_evb.pblb \
 	$(call if_changed,rkimg_image)
 
 $(obj)/barebox-rk3568-bpi-r2pro.img: $(obj)/start_rk3568_bpi_r2pro.pblb \
+                $(board)/rockchip-rk3568-bpi-r2pro/sdram-init.bin
+	$(call if_changed,rkimg_image)
+$(obj)/barebox-rk3568-bpi-r2pro-v00.img: $(obj)/start_rk3568_bpi_r2pro_v00.pblb \
                 $(board)/rockchip-rk3568-bpi-r2pro/sdram-init.bin
 	$(call if_changed,rkimg_image)
 
