@@ -122,6 +122,10 @@ static void rk3568_set_to_rgmii(struct eqos *eqos,
 	regmap_write(priv->grf, offset_con0,
 		     RK3568_GMAC_CLK_RX_DL_CFG(rx_delay) |
 		     RK3568_GMAC_CLK_TX_DL_CFG(tx_delay));
+	dev_err(dev,"offset %x val: %x (rx:%x,tx:%x)\n", offset_con0, RK3568_GMAC_CLK_RX_DL_CFG(rx_delay) | RK3568_GMAC_CLK_TX_DL_CFG(tx_delay),rx_delay,tx_delay);
+
+	//ERROR: eqos-rockchip fe010000.ethernet@fe010000.of: offset 388 val: 7f7f264f (rx:26,tx:4f)mdio_bus: miibus0: probed
+	//ERROR: eqos-rockchip fe2a0000.ethernet@fe2a0000.of: offset 380 val: 7f7f0f4f (rx:f,tx:4f)mdio_bus: miibus1: probed
 }
 
 static void rk3568_set_to_rmii(struct eqos *eqos)
