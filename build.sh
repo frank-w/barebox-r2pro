@@ -30,8 +30,29 @@ case $1 in
 		sudo dd if=images/barebox-rk3568-bpi-r2pro.img of=$dev bs=1024 seek=32
 	fi
 	;;
+"mount")
+	mount | grep "BPI-BOOT" > /dev/null
+	if [[ $? -ne 0 ]];then
+		udisksctl mount -b /dev/disk/by-label/BPI-BOOT
+	fi
+	mount | grep "BPI-ROOT" > /dev/null
+	if [[ $? -ne 0 ]];then
+		udisksctl mount -b /dev/disk/by-label/BPI-ROOT
+	fi
+	;;
+
+"umount")
+	echo "umount SD Media"
+	dev=$(mount | grep BPI-ROOT | sed -e 's/[0-9] .*$/?/')
+	if [[ ! -z "$dev" ]];then
+		umount $dev
+	fi
+	;;
 "upload")
 	scp images/barebox-rk3568-bpi-r2pro.img 192.168.0.10:/var/lib/tftp/
+	;;
+"")
+	$0 build
 	;;
 *)
 	echo "unknown command $1"
