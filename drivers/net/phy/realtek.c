@@ -84,6 +84,7 @@ static int rtl8211f_config_init(struct phy_device *phydev)
 	u16 val_txdly, val_rxdly;
 	int ret;
 
+	dev_err(&phydev->dev,"%s:%d intf:%d (RGMII:%d,rgmii-id:%d)\n",__FUNCTION__,__LINE__,phydev->interface,PHY_INTERFACE_MODE_RGMII,PHY_INTERFACE_MODE_RGMII_ID);
 	switch (phydev->interface) {
 	case PHY_INTERFACE_MODE_RGMII:
 		val_txdly = 0;
