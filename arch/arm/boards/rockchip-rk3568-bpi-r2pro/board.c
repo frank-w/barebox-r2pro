@@ -24,6 +24,11 @@ static int rk3568_bpi_r2pro_probe(struct device_d *dev)
 	barebox_set_hostname("bpi-r2pro");
 	machine_is_bpi_r2pro = true;
 
+	if (of_machine_is_compatible("rockchip,rk3568-bpi-r2pro-v00") {
+		barebox_set_model("BPI R2PRO V00");
+		barebox_set_hostname("bpi-r2pro-v00");
+	}
+
 	if (bootsource == BOOTSOURCE_MMC && instance == 1)
 		of_device_enable_path("/chosen/environment-sd");
 	else
