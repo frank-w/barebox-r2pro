@@ -56,5 +56,7 @@ ENTRY_FUNCTION(start_rk3568_bpi_r2pro, r0, r1, r2)
 
 ENTRY_FUNCTION(start_rk3568_bpi_r2pro_v00, r0, r1, r2)
 {
+	barebox_set_model("BPI R2PRO V00");
+	barebox_set_hostname("bpi-r2pro-v00");
 	start_rk3568_bpi_r2pro_common(__dtb_rk3568_bpi_r2_pro_v00_start);
 }
