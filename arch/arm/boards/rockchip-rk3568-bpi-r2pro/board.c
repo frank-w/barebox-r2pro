@@ -39,6 +39,7 @@ static int rk3568_bpi_r2pro_probe(struct device_d *dev)
 
 static const struct of_device_id rk3568_bpi_r2pro_of_match[] = {
 	{ .compatible = "rockchip,rk3568-bpi-r2pro" },
+	{ .compatible = "rockchip,rk3568-bpi-r2pro-v00" },
 	{ /* Sentinel */},
 };
 
