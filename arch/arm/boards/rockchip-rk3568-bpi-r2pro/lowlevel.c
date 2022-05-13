@@ -17,10 +17,13 @@ static noinline void rk3568_start(void *fdt_blob_fixed_offset)
 	void *fdt;
 
 	/*
-	 * Enable vccio4 1.8V and vccio6 1.8V
-	 * Needed for GMAC to work.
+	 * set iodomain vccio6 to 1.8V needed for GMAC1 to work.
+	 * vccio4 (gmac0/switch) needs to stay at 3v3 (default)
 	 */
-	writel(RK_SETBITS(0x50), 0xfdc20140);
+	//set bit 6 in PMU_GRF_IO_VSEL0 for vccio6 1v8
+	writel(RK_SETBITS(BIT(6)), PMU_GRF_IO_VSEL0);
+	//clear bit 6 for 3v3 as it was set to 1v8
+	writel(RK_CLRBITS(BIT(6)), PMU_GRF_IO_VSEL1);
 
 	fdt = fdt_blob_fixed_offset;
 
