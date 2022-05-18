@@ -118,23 +118,27 @@ static int rk_iodomain_probe(struct device_d *dev)
 
 		if (!supply_name)
 			continue;
+		dev_info(dev, "DEBUG %s:%d reg:%s\n",__FUNCTION__,__LINE__,supply_name);
+		reg = regulator_get(iod->dev, supply_name); //reg=NULL
+		if (reg)
+		{
+			if (IS_ERR(reg)) {
+				ret = PTR_ERR(reg);
+				dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 
-		reg = regulator_get(iod->dev, supply_name);
-		if (IS_ERR(reg)) {
-			ret = PTR_ERR(reg);
-
-			/* If a supply wasn't specified, that's OK */
-			if (ret == -ENODEV)
-				continue;
-			else if (ret != -EPROBE_DEFER)
-				dev_err(iod->dev, "couldn't get regulator %s\n",
-					supply_name);
-			dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
-			return ret;
+				/* If a supply wasn't specified, that's OK */
+				if (ret == -ENODEV)
+					continue;
+				else if (ret != -EPROBE_DEFER)
+					dev_err(iod->dev, "couldn't get regulator %s\n",
+						supply_name);
+				dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
+				return ret;
+			}
+			/* set initial correct value */
+			uV = regulator_get_voltage(reg);
+			dev_info(iod->dev, "DEBUG reg:%s (%p) uV:%d\n",supply_name,reg,uV);
 		}
-		/* set initial correct value */
-		uV = regulator_get_voltage(reg);
-		dev_info(iod->dev, "regulator %s uV:%d\n",supply_name,uV);
 	}
 	dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	return 0;
