@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2014 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
  */
+#define DEBUG 1
 #include <common.h>
 #include <regulator.h>
 #include <of.h>
@@ -198,13 +199,13 @@ static struct regulator_internal *of_regulator_get(struct device_d *dev, const c
 	struct regulator_internal *ri;
 	struct device_node *node, *node_parent;
 	int ret;
-
+dev_info(dev, "DEBUG %s:%d reg:%s\n",__FUNCTION__,__LINE__,supply);
 	/*
 	 * If the device does have a device node return the dummy regulator.
 	 */
 	if (!dev->device_node)
 		return NULL;
-
+dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 	propname = basprintf("%s-supply", supply);
 
 	/*
@@ -215,9 +216,10 @@ static struct regulator_internal *of_regulator_get(struct device_d *dev, const c
 		dev_dbg(dev, "No %s-supply node found, using dummy regulator\n",
 				supply);
 		ri = NULL;
+		dev_info(dev, "DEBUG %s:%d prop:%s not found\n",__FUNCTION__,__LINE__,propname);
 		goto out;
 	}
-
+dev_info(dev, "DEBUG %s:%d prop:%s\n",__FUNCTION__,__LINE__,propname);
 	/*
 	 * The device node specifies a supply, so it's mandatory. Return an error when
 	 * something goes wrong below.
@@ -226,9 +228,10 @@ static struct regulator_internal *of_regulator_get(struct device_d *dev, const c
 	if (!node) {
 		dev_dbg(dev, "No %s node found\n", propname);
 		ri = ERR_PTR(-EINVAL);
+		dev_info(dev, "DEBUG %s:%d no node %s found\n",__FUNCTION__,__LINE__,propname);
 		goto out;
 	}
-
+dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 	ret = of_device_ensure_probed(node);
 	if (ret) {
 		/* 
@@ -247,9 +250,10 @@ static struct regulator_internal *of_regulator_get(struct device_d *dev, const c
 		}
 
 		ri = ERR_PTR(ret);
+		dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 		goto out;
 	}
-
+dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 	list_for_each_entry(ri, &regulator_list, list) {
 		if (ri->node == node) {
 			dev_dbg(dev, "Using %s regulator from %s\n",
@@ -263,6 +267,7 @@ static struct regulator_internal *of_regulator_get(struct device_d *dev, const c
 	 * added in future initcalls, so, instead of reporting a
 	 * complete failure report probe deferral
 	 */
+	dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 	ri = ERR_PTR(-EPROBE_DEFER);
 out:
 	free(propname);
