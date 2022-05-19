@@ -63,13 +63,27 @@ static int rk808_probe(struct device_d *dev)
 
 	if (of_device_is_compatible(np, "rockchip,rk817") ||
 	    of_device_is_compatible(np, "rockchip,rk809")) {
+		dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 		pmic_id_msb = RK817_ID_MSB;
 		pmic_id_lsb = RK817_ID_LSB;
+	}
+	dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
+
+	struct device_node *child,*regchild;
+	for_each_child_of_node(dev->device_node, child) {
+		dev_info(dev, "DEBUG %s:%d child:%s (%s)\n",__FUNCTION__,__LINE__,child->name,child->full_name);
+		if (!strcmp(child->name,"regulators"))
+		{
+			dev_info(dev, "DEBUG %s:%d regulators found\n",__FUNCTION__,__LINE__);
+			for_each_child_of_node(child, regchild) {
+				dev_info(dev, "DEBUG %s:%d reg-child:%s (to register regulator)\n",__FUNCTION__,__LINE__,regchild->name);
+			}
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_OFDEVICE) && dev->device_node)
 		return of_platform_populate(dev->device_node, NULL, dev);
-
+	dev_info(dev, "DEBUG %s:%d\n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
