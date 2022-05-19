@@ -108,4 +108,8 @@ config MFD_ATMEL_FLEXCOM
 	  by the probe function of this MFD driver according to a device tree
 	  property.
 
+config MFD_RK808
+	bool "Rockchip rk808 mfd driver"
+	help
+	  Select rk808 mfd driver
 endmenu
