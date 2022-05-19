@@ -127,7 +127,7 @@ static int rk_iodomain_probe(struct device_d *dev)
 				dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 
 				/* If a supply wasn't specified, that's OK */
-				if (ret == -ENODEV)
+				if (ret == -ENODEV) //maybe defer probe because rk808 is not yet ready?
 					continue;
 				else if (ret != -EPROBE_DEFER)
 					dev_err(iod->dev, "couldn't get regulator %s\n",
