@@ -877,6 +877,7 @@ static int rk808_regulator_probe(struct device_d *dev)
 	for (i = 0; i < nregulators; i++) {
 		ret = rk808_regulator_register(rk808, i, &matches[i],
 					       &regulators[i]);
+		dev_info(dev, "DEBUG %s:%d [%d] reg:%s,ret:%d\n",__FUNCTION__,__LINE__,i,regulators[i].rdev.dev->name,ret); //,matches[i].desc);
 		if (ret < 0)
 			return ret;
 	}
