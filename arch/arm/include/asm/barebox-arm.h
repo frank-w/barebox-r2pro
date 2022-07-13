@@ -125,7 +125,7 @@ static inline unsigned long arm_mem_ttb(unsigned long membase,
 static inline unsigned long arm_mem_early_malloc(unsigned long membase,
 						 unsigned long endmem)
 {
-	return arm_mem_ttb(membase, endmem) - SZ_128K;
+	return arm_mem_ttb(membase, endmem) - SZ_256K;
 }
 
 static inline unsigned long arm_mem_early_malloc_end(unsigned long membase,
