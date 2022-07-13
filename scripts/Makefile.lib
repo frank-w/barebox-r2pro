@@ -279,6 +279,7 @@ suffix_$(CONFIG_IMAGE_COMPRESSION_GZIP) = gzip
 suffix_$(CONFIG_IMAGE_COMPRESSION_LZO)  = lzo
 suffix_$(CONFIG_IMAGE_COMPRESSION_LZ4)	= lz4
 suffix_$(CONFIG_IMAGE_COMPRESSION_XZKERN) = xzkern
+suffix_$(CONFIG_IMAGE_COMPRESSION_ZSTD)	= zstd_with_size
 suffix_$(CONFIG_IMAGE_COMPRESSION_NONE) = comp_copy
 
 # Gzip
@@ -477,6 +478,34 @@ cmd_lz4 = (cat $(filter-out FORCE,$^) | \
 
 %.lz4: %
 	$(call if_changed,lz4)
+
+# ZSTD
+# ---------------------------------------------------------------------------
+# Appends the uncompressed size of the data using size_append. The .zst
+# format has the size information available at the beginning of the file too,
+# but it's in a more complex format and it's good to avoid changing the part
+# of the boot code that reads the uncompressed size.
+#
+# Note that the bytes added by size_append will make the zstd tool think that
+# the file is corrupt. This is expected.
+#
+# zstd uses a maximum window size of 8 MB. zstd22 uses a maximum window size of
+# 128 MB. zstd22 is used for kernel compression because it is decompressed in a
+# single pass, so zstd doesn't need to allocate a window buffer. When streaming
+# decompression is used, like initramfs decompression, zstd22 should likely not
+# be used because it would require zstd to allocate a 128 MB buffer.
+
+quiet_cmd_zstd = ZSTD    $@
+      cmd_zstd = cat $(filter-out FORCE,$^) | zstd -19 > $@
+
+quiet_cmd_zstd_with_size = ZSTD    $@
+      cmd_zstd_with_size = { cat $(filter-out FORCE,$^) | zstd -19; $(call size_append, $(filter-out FORCE,$^)); } > $@
+
+quiet_cmd_zstd22 = ZSTD22  $@
+      cmd_zstd22 = cat $(filter-out FORCE,$^) | zstd -22 --ultra > $@
+
+quiet_cmd_zstd22_with_size = ZSTD22  $@
+      cmd_zstd22_with_size = { cat $(filter-out FORCE,$^) | zstd -22 --ultra; $(call size_append, $(filter-out FORCE,$^)); } > $@
 
 # comp_copy
 # ---------------------------------------------------------------------------
