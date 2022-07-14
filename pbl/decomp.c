@@ -31,6 +31,10 @@
 #include "../../../lib/decompress_unxz.c"
 #endif
 
+#ifdef CONFIG_IMAGE_COMPRESSION_ZSTD
+#include "../../../lib/decompress_unzstd.c"
+#endif
+
 #ifdef CONFIG_IMAGE_COMPRESSION_NONE
 STATIC int decompress(u8 *input, int in_len,
 				int (*fill) (void *, unsigned int),

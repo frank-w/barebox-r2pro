@@ -58,6 +58,7 @@ enum filetype {
 	filetype_mxs_sd_image,
 	filetype_rockchip_rkns_image,
 	filetype_fip,
+	filetype_zstd_compressed,
 	filetype_max,
 };
 
@@ -79,6 +80,7 @@ static inline bool file_is_compressed_file(enum filetype ft)
 	switch (ft) {
 	case filetype_lzo_compressed:
 	case filetype_lz4_compressed:
+	case filetype_zstd_compressed:
 	case filetype_gzip:
 	case filetype_bzip2:
 	case filetype_xz_compressed:

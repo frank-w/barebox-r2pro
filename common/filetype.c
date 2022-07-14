@@ -77,6 +77,7 @@ static const struct filetype_str filetype_str[] = {
 	[filetype_mxs_sd_image] = { "i.MX23/28 SD card image", "mxs-sd-image" },
 	[filetype_rockchip_rkns_image] = { "Rockchip boot image", "rk-image" },
 	[filetype_fip] = { "TF-A Firmware Image Package", "fip" },
+	[filetype_zstd_compressed] = { "ZSTD compressed", "zstd" },
 };
 
 const char *file_type_to_string(enum filetype f)
@@ -278,6 +279,9 @@ enum filetype file_detect_type(const void *_buf, size_t bufsize)
 	if (buf8[0] == 0x02 && buf8[1] == 0x21 && buf8[2] == 0x4c &&
 			buf8[3] == 0x18)
 		return filetype_lz4_compressed;
+	if (buf8[0] == 0x28 && buf8[1] == 0xB5 && buf8[2] == 0x2F &&
+			buf8[3] == 0xFD)
+		return filetype_zstd_compressed;
 	if (buf[0] == be32_to_cpu(0x27051956))
 		return filetype_uimage;
 	if (buf[0] == 0x23494255)
