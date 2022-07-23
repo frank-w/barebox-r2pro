@@ -42,6 +42,7 @@ static int regulator_map_voltage(struct regulator_dev *rdev, int min_uV,
 
 static int regulator_enable_internal(struct regulator_internal *ri)
 {
+	struct regulator_dev *rdev = ri->rdev;
 	int ret;
 
 	if (ri->enable_count) {
@@ -49,12 +50,19 @@ static int regulator_enable_internal(struct regulator_internal *ri)
 		return 0;
 	}
 
-	if (!ri->rdev->desc->ops->enable)
+	if (!rdev->desc->ops->enable)
 		return -ENOSYS;
 
-	ret = ri->rdev->desc->ops->enable(ri->rdev);
+	/* turn on parent regulator */
+	ret = regulator_enable(rdev->supply);
 	if (ret)
 		return ret;
+
+	ret = rdev->desc->ops->enable(ri->rdev);
+	if (ret) {
+		regulator_disable(rdev->supply);
+		return ret;
+	}
 
 	if (ri->enable_time_us)
 		udelay(ri->enable_time_us);
@@ -66,6 +74,7 @@ static int regulator_enable_internal(struct regulator_internal *ri)
 
 static int regulator_disable_internal(struct regulator_internal *ri)
 {
+	struct regulator_dev *rdev = ri->rdev;
 	int ret;
 
 	if (!ri->enable_count)
@@ -76,16 +85,16 @@ static int regulator_disable_internal(struct regulator_internal *ri)
 		return 0;
 	}
 
-	if (!ri->rdev->desc->ops->disable)
+	if (!rdev->desc->ops->disable)
 		return -ENOSYS;
 
-	ret = ri->rdev->desc->ops->disable(ri->rdev);
+	ret = rdev->desc->ops->disable(rdev);
 	if (ret)
 		return ret;
 
 	ri->enable_count--;
 
-	return 0;
+	return regulator_disable(rdev->supply);
 }
 
 static int regulator_set_voltage_internal(struct regulator_internal *ri,
@@ -319,6 +328,26 @@ static struct regulator_internal *dev_regulator_get(struct device_d *dev, const 
 	return ret;
 }
 
+static int regulator_resolve_supply(struct regulator_dev *rdev)
+{
+	struct regulator *supply;
+	const char *supply_name;
+
+	if (!rdev || rdev->supply)
+		return 0;
+
+	supply_name = rdev->desc->supply_name;
+	if (!supply_name)
+		return 0;
+
+	supply = regulator_get(rdev->dev, supply_name);
+	if (IS_ERR(supply))
+		return PTR_ERR(supply);
+
+	rdev->supply = supply;
+	return 0;
+}
+
 /*
  * regulator_get - get the supply for a device.
  * @dev:	the device a supply is requested for
@@ -333,6 +362,7 @@ struct regulator *regulator_get(struct device_d *dev, const char *supply)
 {
 	struct regulator_internal *ri = NULL;
 	struct regulator *r;
+	int ret;
 
 	if (dev->device_node) {
 		ri = of_regulator_get(dev, supply);
@@ -348,6 +378,10 @@ struct regulator *regulator_get(struct device_d *dev, const char *supply)
 
 	if (!ri)
 		return NULL;
+
+	ret = regulator_resolve_supply(ri->rdev);
+	if (ret < 0)
+		return ERR_PTR(ret);
 
 	r = xzalloc(sizeof(*r));
 	r->ri = ri;
@@ -583,6 +617,8 @@ int regulator_get_voltage(struct regulator *regulator)
 		ret = rdev->desc->ops->list_voltage(rdev, 0);
 	} else if (rdev->desc->fixed_uV && (rdev->desc->n_voltages == 1)) {
 		ret = rdev->desc->fixed_uV;
+	} else if (rdev->supply) {
+		ret = regulator_get_voltage(rdev->supply);
 	} else {
 		return -EINVAL;
 	}
