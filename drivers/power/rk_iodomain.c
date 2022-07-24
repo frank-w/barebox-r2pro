@@ -124,7 +124,7 @@ static int rk_iodomain_probe(struct device_d *dev)
 		{
 			if (IS_ERR(reg)) {
 				ret = PTR_ERR(reg);
-				dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
+				//dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 
 				/* If a supply wasn't specified, that's OK */
 				if (ret == -ENODEV)
@@ -132,7 +132,7 @@ static int rk_iodomain_probe(struct device_d *dev)
 				else if (ret != -EPROBE_DEFER)
 					dev_err(iod->dev, "couldn't get regulator %s\n",
 						supply_name);
-				dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
+				//dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 				return ret;
 			}
 			/* set initial correct value */
@@ -140,7 +140,7 @@ static int rk_iodomain_probe(struct device_d *dev)
 			dev_info(iod->dev, "DEBUG reg:%s (%p) uV:%d\n",supply_name,reg,uV);
 		}
 	}
-	dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
+	//dev_info(dev, "DEBUG %s:%d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	return 0;
 }
 
