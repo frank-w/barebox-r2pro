@@ -588,6 +588,8 @@ int regulator_get_voltage(struct regulator *regulator)
 		ret = rdev->desc->ops->list_voltage(rdev, 0);
 	} else if (rdev->desc->fixed_uV && (rdev->desc->n_voltages == 1)) {
 		ret = rdev->desc->fixed_uV;
+	} else if (regulator->ri->min_uv == regulator->ri->max_uv) {
+		ret = regulator->ri->min_uv;
 	} else {
 		return -EINVAL;
 	}
